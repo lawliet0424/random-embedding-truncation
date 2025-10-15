@@ -1,0 +1,5 @@
+batch_size = 64
+model_name = "intfloat/e5-large-v2"
+dataset_name = "dbpedia-entity"
+result_output_dir = "./outputs/random_truncation_beir_eval_e5-large/"
+cache_dir = "./cache/truncation_beir_eval/e5-large-v2/dbpedia-entity"

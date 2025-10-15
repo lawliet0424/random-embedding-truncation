@@ -1,0 +1,5 @@
+batch_size = 64
+model_name = "sentence-transformers/all-mpnet-base-v2"
+dataset_name = "nfcorpus"
+result_output_dir = "./outputs/truncation_beir_eval/"
+cache_dir = "./cache/truncation_beir_eval/all-mpnet-base-v2/nfcorpus"

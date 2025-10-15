@@ -1,0 +1,4 @@
+batch_size = 64
+model_name = "sentence-transformers/all-mpnet-base-v2"
+result_output_dir = "./outputs/random_truncation_mteb_eval/"
+cache_dir = "./cache/truncation_mteb_eval/all-mpnet-base-v2/"

@@ -1,0 +1,5 @@
+batch_size = 8
+model_name = "intfloat/e5-mistral-7b-instruct"
+dataset_name = "quora"
+result_output_dir = "./outputs/truncation_nanobeir_eval/"
+cache_dir = "./cache/truncation_beir_eval/e5-mistral-7b-instruct/quora"

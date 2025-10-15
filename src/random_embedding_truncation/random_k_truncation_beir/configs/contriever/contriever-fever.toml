@@ -1,0 +1,5 @@
+batch_size = 64
+model_name = "nishimoto/contriever-sentencetransformer"
+dataset_name = "fever"
+result_output_dir = "./outputs/random_truncation_beir_eval/"
+cache_dir = "./cache/random_truncation_beir_eval/contriever-sentencetransformer/fever"

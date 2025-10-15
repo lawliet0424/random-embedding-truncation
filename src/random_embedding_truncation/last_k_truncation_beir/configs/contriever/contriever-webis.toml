@@ -1,0 +1,5 @@
+batch_size = 64
+model_name = "nishimoto/contriever-sentencetransformer"
+dataset_name = "webis-touche2020"
+result_output_dir = "./outputs/truncation_beir_eval/"
+cache_dir = "./cache/truncation_beir_eval/contriever-sentencetransformer/webis-touche2020"

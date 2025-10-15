@@ -1,0 +1,4 @@
+batch_size = 2
+model_name = "intfloat/e5-mistral-7b-instruct"
+result_output_dir = "./outputs/truncation_mteb_eval/"
+cache_dir = "./cache/truncation_mteb_eval/e5-mistral-7b-instruct/"

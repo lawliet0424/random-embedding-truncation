@@ -1,0 +1,5 @@
+batch_size = 64
+model_name = "sentence-transformers/paraphrase-MiniLM-L3-v2"
+dataset_name = "msmarco"
+result_output_dir = "./outputs/random_truncation_beir_eval/"
+cache_dir = "./cache/truncation_beir_eval/paraphrase-MiniLM-L3-v2/msmarco"

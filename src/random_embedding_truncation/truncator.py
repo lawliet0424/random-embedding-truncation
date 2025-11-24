@@ -1,6 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
+import numpy as np
 from mteb.models.cache_wrapper import CachedEmbeddingWrapper
 from sentence_transformers import SentenceTransformer, SentenceTransformerModelCardData
 
@@ -35,6 +37,9 @@ class Truncator:
     cache_dir: Path | None = None
     indexes_to_keep: list[int] | None = None
     query_prompt: str | None = None
+    precomputed_embeddings: np.ndarray | None = None
+    _corpus_id_to_index: dict[str, int] | None = field(default=None, init=False)
+    _corpus_start_index: int = field(default=0, init=False)
 
     @property
     def model_card_data(self):
@@ -82,6 +87,44 @@ class Truncator:
         sep: str = " ",
         **kwargs,
     ):
+        # precomputed_embeddings가 있으면 그것을 사용
+        if self.precomputed_embeddings is not None:
+            if type(corpus) is dict:
+                # dict 형태인 경우
+                if "_id" in corpus and self._corpus_id_to_index is not None:
+                    # _id를 기반으로 매칭 (corpus_id_to_index가 설정된 경우에만)
+                    indices = [self._corpus_id_to_index.get(doc_id, -1) for doc_id in corpus["_id"]]
+                    if -1 in indices:
+                        raise ValueError("일부 corpus _id가 precomputed_embeddings에 없습니다.")
+                    embeddings = self.precomputed_embeddings[indices]
+                else:
+                    # 순서 기반 (첫 호출 시 인덱스 0부터 시작)
+                    num_docs = len(corpus["text"])
+                    end_index = self._corpus_start_index + num_docs
+                    embeddings = self.precomputed_embeddings[self._corpus_start_index:end_index]
+                    self._corpus_start_index = end_index
+            else:
+                # list 형태인 경우
+                if len(corpus) > 0 and "_id" in corpus[0] and self._corpus_id_to_index is not None:
+                    # _id를 기반으로 매칭 (corpus_id_to_index가 설정된 경우에만)
+                    indices = [self._corpus_id_to_index.get(doc.get("_id", ""), -1) for doc in corpus]
+                    if -1 in indices:
+                        raise ValueError("일부 corpus _id가 precomputed_embeddings에 없습니다.")
+                    embeddings = self.precomputed_embeddings[indices]
+                else:
+                    # 순서 기반 (첫 호출 시 인덱스 0부터 시작)
+                    num_docs = len(corpus)
+                    end_index = self._corpus_start_index + num_docs
+                    embeddings = self.precomputed_embeddings[self._corpus_start_index:end_index]
+                    self._corpus_start_index = end_index
+            
+            # indexes_to_keep이 있으면 해당 차원만 선택
+            if self.indexes_to_keep is not None:
+                embeddings = embeddings[:, self.indexes_to_keep]
+            
+            return embeddings
+        
+        # 기존 로직: corpus를 인코딩
         if type(corpus) is dict:
             sentences = [
                 (

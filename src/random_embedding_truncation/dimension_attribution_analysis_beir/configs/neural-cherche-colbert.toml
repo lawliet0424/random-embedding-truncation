@@ -1,0 +1,4 @@
+cache_dir = "/media/dcceris/muvera_optimized/embeddings/raphaelsty_neural-cherche-colbert"
+output_path = "/media/dcceris/muvera_optimized/embeddings/outputs/one_dim_drop/results/raphaelsty_neural-cherche-colbert.json"
+model_name = "raphaelsty/neural-cherche-colbert"
+embedding_file_pattern = "{cache_dir}/{dataset_name}/{dataset_name}_{model_name_safe}_embeddings.dat"

@@ -139,9 +139,6 @@ def performance_test_partition(dim_size, precomputed_embeddings_dict, encoder, c
             print(f"✅ [INFO] {dataset_name}, dim_to_drop={dim_to_drop} 완료")
 
 if __name__ == "__main__":
-    ##FDE 생성 관련 meta.json 파일 이용해서 실험하고자 하는 FDE에 대해 실험 수행
-    method = args.ArgumentParser()
-
     config = Config.from_config()
 
     if not config.output_path.parent.exists():
@@ -149,13 +146,19 @@ if __name__ == "__main__":
 
     encoder = SentenceTransformer(config.model_name, trust_remote_code=True)
 
+    ##FDE 생성 관련 meta.json 파일 이용해서 실험하고자 하는 FDE에 대해 실험 수행
+    method = args.ArgumentParser(description="FDE 생성 방법 선택")
+    method.add_argument("--method", type=str, choices=["fde", "partition"], default="fde")
+    method.add_argument("--dataset_name", type=str, choices=DATASET_NAMES, default="scidocs")
+    method.add_argument("--dim_size", type=int, default=128)
+    method.add_argument("--repetitions", type=int, default=5)
+    method.add_argument("--simhash", type=int, default=4)
+    method.add_argument("--seed", type=int, default=42)
+
+    args = method.parse_args()
+
     dim_size = encoder.get_sentence_embedding_dimension()
     assert isinstance(dim_size, int)
-
-    if config.output_path.exists():
-        results = sienna.load(config.output_path)
-    else:
-        results = {}
 
     # 각 dataset에 대한 precomputed embeddings 로드
     precomputed_embeddings_dict = {}
@@ -199,9 +202,7 @@ if __name__ == "__main__":
             if created_embedding_file:
                 embedding_file = Path(created_embedding_file)
             
-            # 파일이 생성되었는지 확인
-            if embedding_file.exists():
-                # 생성된 임베딩 파일 로드
+            # 파일이 생성되MPNet (base)된 임베딩 파일 로드
                 file_size = embedding_file.stat().st_size
                 num_docs = file_size // (dim_size * 4)  # float32 = 4 bytes
                 emb_mem = np.memmap(embedding_file, dtype="float32", mode="r", shape=(num_docs, dim_size))
